@@ -47,24 +47,40 @@ export default function AboutSection({ onOpenTerminal }: AboutSectionProps) {
           {/* Left Column: Personal Narrative */}
           <div className="lg:col-span-7 space-y-6">
             <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/[0.08] space-y-6">
-              <div className="flex items-center gap-3 pb-4 border-b border-white/[0.08]">
-                <div className="w-10 h-10 rounded-xl bg-[#00f59b]/10 border border-[#00f59b]/30 flex items-center justify-center text-[#00f59b]">
+              <div className="flex items-center gap-3.5 pb-4 border-b border-white/[0.08]">
+                <div className="w-11 h-11 rounded-2xl bg-[#00f59b]/10 border border-[#00f59b]/30 flex items-center justify-center text-[#00f59b] shrink-0 shadow-lg shadow-[#00f59b]/10">
                   <Compass className="w-5 h-5" />
                 </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-white">
+                <div className="min-w-0">
+                  <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                     Full-Stack Software Developer
                   </h3>
-                  <div className="flex items-center gap-2 text-xs font-mono text-gray-400 mt-0.5">
-                    <MapPin className="w-3.5 h-3.5 text-[#00f59b]" />
-                    <span>Based in Kerala, India • Available Globally</span>
+                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-mono mt-1">
+                    <span className="flex items-center gap-1.5 text-gray-300">
+                      <MapPin className="w-3.5 h-3.5 text-[#00f59b] shrink-0" />
+                      <span>Kerala, India</span>
+                    </span>
+                    <span className="text-gray-600 hidden xs:inline">•</span>
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#00f59b]/10 border border-[#00f59b]/25 text-[10px] text-[#00f59b] font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00f59b] animate-pulse"></span>
+                      <span>Available Globally</span>
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4 text-sm sm:text-base text-gray-300 leading-relaxed font-normal">
+              <div className="space-y-3.5 sm:space-y-4 text-sm sm:text-base text-gray-300 leading-relaxed font-normal">
                 {PERSONAL_INFO.bio.map((paragraph, idx) => (
-                  <p key={idx}>{paragraph}</p>
+                  <p 
+                    key={idx}
+                    className={
+                      idx === 0 
+                        ? "text-white font-medium border-l-2 border-[#00f59b] pl-3.5 py-0.5 bg-gradient-to-r from-[#00f59b]/[0.05] to-transparent rounded-r-lg" 
+                        : "text-gray-300 pl-0"
+                    }
+                  >
+                    {paragraph}
+                  </p>
                 ))}
               </div>
 

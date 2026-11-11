@@ -77,21 +77,21 @@ export default function SkillsSection() {
           {filteredCategories.map((category) => (
             <div
               key={category.category}
-              className="glass-panel glass-panel-hover p-6 sm:p-8 rounded-3xl border border-white/[0.08] flex flex-col justify-between space-y-6"
+              className="glass-panel glass-panel-hover p-4 xs:p-5 sm:p-8 rounded-3xl border border-white/[0.08] flex flex-col justify-between space-y-6"
             >
               <div className="space-y-6">
                 {/* Category Header */}
-                <div className="flex items-center gap-3.5 pb-4 border-b border-white/[0.08]">
+                <div className="flex items-center gap-3 sm:gap-3.5 pb-4 border-b border-white/[0.08]">
                   <div
-                    className={`p-3 rounded-xl border ${category.accentClass}`}
+                    className={`p-2.5 sm:p-3 rounded-xl border shrink-0 ${category.accentClass}`}
                   >
                     {ICON_MAP[category.iconName] || <Layers className="w-5 h-5" />}
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-[15px] xs:text-base sm:text-xl font-bold text-white tracking-tight whitespace-nowrap">
                       {category.category}
                     </h3>
-                    <span className="text-xs font-mono text-gray-400">
+                    <span className="text-xs font-mono text-gray-400 block truncate">
                       {category.skills.length} Verified Capabilities
                     </span>
                   </div>
@@ -105,11 +105,11 @@ export default function SkillsSection() {
                       className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.1] transition-colors space-y-1"
                     >
                       <div className="flex items-center justify-between text-sm font-bold text-white">
-                        <span className="flex items-center gap-2">
+                        <span className="flex items-center gap-2 min-w-0 truncate">
                           <CheckCircle2 className="w-3.5 h-3.5 text-[#00f59b] shrink-0" />
-                          <span>{skill.name}</span>
+                          <span className="truncate">{skill.name}</span>
                         </span>
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500 shrink-0 pl-2">
                           Production Ready
                         </span>
                       </div>
@@ -122,9 +122,14 @@ export default function SkillsSection() {
               </div>
 
               {/* Bottom Discipline Badge */}
-              <div className="pt-2 flex items-center justify-between text-xs font-mono text-gray-500 border-t border-white/[0.04]">
-                <span>No arbitrary percentage meters</span>
-                <span className="text-[#00f59b]">100% Practical Implementation</span>
+              <div className="pt-2.5 sm:pt-2 flex items-center justify-between text-[10px] xs:text-[11px] sm:text-xs font-mono border-t border-white/[0.04] gap-2">
+                <span className="text-gray-400 truncate">
+                  <span className="hidden md:inline">No arbitrary percentage meters</span>
+                  <span className="md:hidden">Zero vanity metrics</span>
+                </span>
+                <span className="text-[#00f59b] font-bold whitespace-nowrap shrink-0">
+                  100% Practical Implementation
+                </span>
               </div>
             </div>
           ))}

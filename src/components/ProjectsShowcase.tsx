@@ -85,48 +85,51 @@ export default function ProjectsShowcase() {
             </p>
           </div>
 
-          {/* Filter Pills with smooth mobile touch scrolling */}
-          <div className="w-full md:w-auto flex justify-center md:justify-end overflow-x-auto py-1.5 md:py-0 px-2 sm:px-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <div className="inline-flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md shrink-0">
+          {/* Filter Segmented Control: One-Line Responsive Across All Mobile & Desktop */}
+          <div className="w-full md:w-auto flex justify-center md:justify-end">
+            <div className="flex items-center justify-between w-full max-w-md sm:w-auto gap-1 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
               <button
                 onClick={() => setActiveCategory("all")}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial flex items-center justify-center px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   activeCategory === "all"
                     ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                 }`}
               >
-                All ({ALL_PROJECTS.length})
+                <span>All ({ALL_PROJECTS.length})</span>
               </button>
               <button
                 onClick={() => setActiveCategory("featured")}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial flex items-center justify-center px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   activeCategory === "featured"
                     ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                 }`}
               >
-                Featured ({ALL_PROJECTS.filter((p) => p.isFeatured).length})
+                <span className="hidden sm:inline">Featured ({ALL_PROJECTS.filter((p) => p.isFeatured).length})</span>
+                <span className="sm:hidden">Featured</span>
               </button>
               <button
                 onClick={() => setActiveCategory("saas")}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial flex items-center justify-center px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   activeCategory === "saas"
                     ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                 }`}
               >
-                <span>Full-Stack SaaS</span>
+                <span className="hidden sm:inline">Full-Stack SaaS</span>
+                <span className="sm:hidden">SaaS</span>
               </button>
               <button
                 onClick={() => setActiveCategory("client")}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial flex items-center justify-center px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   activeCategory === "client"
                     ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                 }`}
               >
-                <span>Client Platforms</span>
+                <span className="hidden sm:inline">Client Platforms</span>
+                <span className="sm:hidden">Client</span>
               </button>
             </div>
           </div>
@@ -180,12 +183,14 @@ export default function ProjectsShowcase() {
                               {isLiveActive ? (
                                 <>
                                   <ImageIcon className="w-3 h-3" />
-                                  <span>Snapshot View</span>
+                                  <span className="hidden sm:inline">Snapshot View</span>
+                                  <span className="sm:hidden">Snapshot</span>
                                 </>
                               ) : (
                                 <>
                                   <Radio className="w-3 h-3 text-[#00f59b] animate-pulse" />
-                                  <span>Live Interactive App</span>
+                                  <span className="hidden sm:inline">Live Interactive App</span>
+                                  <span className="sm:hidden">Live App</span>
                                 </>
                               )}
                             </button>
@@ -218,8 +223,8 @@ export default function ProjectsShowcase() {
                             className="w-full h-full group-hover/preview:scale-[1.01] transition-transform duration-300"
                           />
 
-                          {/* Floating interactive indicator to view full case study */}
-                          <div className="absolute bottom-3 right-3 z-20 opacity-90 sm:opacity-0 group-hover/preview:opacity-100 transition-all duration-200">
+                          {/* Desktop hover indicator to view full case study (hidden on mobile to prevent overlay clutter) */}
+                          <div className="hidden sm:block absolute bottom-3 right-3 z-20 opacity-0 group-hover/preview:opacity-100 transition-all duration-200 pointer-events-none">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#07080b]/90 border border-[#00f59b]/40 text-[#00f59b] font-bold text-xs backdrop-blur-md shadow-lg shadow-black/80">
                               <Eye className="w-3.5 h-3.5" />
                               <span>Inspect Case Study</span>
