@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { SKILLS_DATA, SkillCategory } from "@/data/portfolioData";
-import { 
-  Layout, 
-  Server, 
-  Database, 
-  Wrench, 
-  Search, 
-  CheckCircle2, 
-  Sparkles,
+import { SKILLS_DATA } from "@/data/portfolioData";
+import {
+  Layout,
+  Server,
+  Database,
+  Wrench,
+  Search,
+  CheckCircle2,
   Layers
 } from "lucide-react";
 
@@ -36,7 +35,7 @@ export default function SkillsSection() {
   }).filter((cat) => cat.skills.length > 0);
 
   return (
-    <section id="skills" className="relative py-24 sm:py-32 border-t border-white/[0.08] overflow-hidden">
+    <section id="skills" className="cv-auto relative py-24 sm:py-32 border-t border-white/[0.08] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14 sm:mb-18">
@@ -60,7 +59,7 @@ export default function SkillsSection() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search stack (e.g. Next.js, JWT)..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-xs font-mono placeholder:text-gray-500 focus:outline-none focus:border-[#00f59b] transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs font-mono placeholder:text-gray-500 focus:outline-none focus:border-[#00f59b] transition-colors"
             />
             {searchQuery && (
               <button

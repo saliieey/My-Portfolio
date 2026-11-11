@@ -129,13 +129,66 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=Space+Grotesk:wght@600;700&display=swap"
           rel="stylesheet"
+        />
+        {/* Anti-extension hydration mismatch protection: intercepts fdprocessedid injected by password managers before React hydrates */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  if (typeof Element !== 'undefined' && Element.prototype) {
+                    var origSet = Element.prototype.setAttribute;
+                    Element.prototype.setAttribute = function(k, v) {
+                      if (k === 'fdprocessedid') return;
+                      return origSet.apply(this, arguments);
+                    };
+                  }
+                  var strip = function(el) {
+                    if (el && el.removeAttribute) {
+                      try { el.removeAttribute('fdprocessedid'); } catch(e) {}
+                    }
+                  };
+                  if (typeof MutationObserver !== 'undefined' && document.documentElement) {
+                    var observer = new MutationObserver(function(muts) {
+                      for (var i = 0; i < muts.length; i++) {
+                        var m = muts[i];
+                        if (m.type === 'attributes' && m.attributeName === 'fdprocessedid') {
+                          strip(m.target);
+                        } else if (m.type === 'childList') {
+                          for (var j = 0; j < m.addedNodes.length; j++) {
+                            var n = m.addedNodes[j];
+                            if (n.nodeType === 1) {
+                              strip(n);
+                              if (n.querySelectorAll) {
+                                var children = n.querySelectorAll('[fdprocessedid]');
+                                for (var k = 0; k < children.length; k++) strip(children[k]);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    });
+                    observer.observe(document.documentElement, {
+                      attributes: true,
+                      childList: true,
+                      subtree: true,
+                      attributeFilter: ['fdprocessedid']
+                    });
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
         />
         <script
           type="application/ld+json"
@@ -143,6 +196,7 @@ export default function RootLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} font-sans bg-[#07080b] text-[#f8fafc] min-h-screen selection:bg-[#00f59b] selection:text-[#07080b]`}
       >
         {children}

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import ProjectsShowcase from "@/components/ProjectsShowcase";
@@ -9,8 +10,10 @@ import SkillsSection from "@/components/SkillsSection";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
-import ResumeModal from "@/components/ResumeModal";
-import DevTerminal from "@/components/DevTerminal";
+
+// Lazy-load dialog modals so they are excluded from the critical first-paint bundle
+const ResumeModal = dynamic(() => import("@/components/ResumeModal"), { ssr: false });
+const DevTerminal = dynamic(() => import("@/components/DevTerminal"), { ssr: false });
 
 export default function Home() {
   const [resumeOpen, setResumeOpen] = useState(false);

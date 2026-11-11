@@ -10,7 +10,6 @@ import {
   Terminal, 
   Sparkles, 
   MapPin, 
-  CheckCircle2,
   Compass,
   Briefcase
 } from "lucide-react";

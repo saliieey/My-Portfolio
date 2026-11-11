@@ -2,12 +2,11 @@
 
 import React from "react";
 import { WORK_EXPERIENCE } from "@/data/portfolioData";
-import { 
-  Briefcase, 
-  Calendar, 
-  MapPin, 
-  CheckCircle2, 
-  ArrowUpRight 
+import {
+  Briefcase,
+  Calendar,
+  MapPin,
+  CheckCircle2
 } from "lucide-react";
 
 export default function ExperienceSection() {
@@ -31,8 +30,8 @@ export default function ExperienceSection() {
         <div className="relative space-y-8 sm:space-y-12 before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-px before:bg-gradient-to-b before:from-[#00f59b] before:via-white/[0.1] before:to-transparent">
           {WORK_EXPERIENCE.map((exp) => (
             <div key={exp.id} className="relative pl-10 sm:pl-16 group">
-              {/* Timeline Indicator Dot */}
-              <div className="absolute left-2.5 sm:left-6.5 top-2 w-3.5 h-3.5 -translate-x-1/2 rounded-full bg-[#00f59b] ring-4 ring-[#07080b] group-hover:scale-125 transition-transform" />
+              {/* Timeline Indicator Dot perfectly aligned on the line */}
+              <div className="absolute left-4 sm:left-8 top-2 w-3.5 h-3.5 -translate-x-1/2 rounded-full bg-[#00f59b] ring-4 ring-[#07080b] group-hover:scale-125 transition-transform" />
 
               <div className="glass-panel glass-panel-hover p-6 sm:p-8 rounded-3xl border border-white/[0.08] space-y-5">
                 {/* Header with Title, Company & Period */}

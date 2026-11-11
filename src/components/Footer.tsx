@@ -2,7 +2,7 @@
 
 import React from "react";
 import { PERSONAL_INFO } from "@/data/portfolioData";
-import { ArrowUp, Mail, Heart, Sparkles } from "lucide-react";
+import { ArrowUp, Mail } from "lucide-react";
 import { LinkedinIcon, GithubIcon } from "./SocialIcons";
 
 export default function Footer() {

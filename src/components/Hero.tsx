@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, memo } from "react";
 import { PERSONAL_INFO } from "@/data/portfolioData";
 import { 
   ArrowDown, 
@@ -31,32 +31,47 @@ const ROLES = [
   "High-Performance Web Craftsman",
 ];
 
-export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+// Memoized Real-time IST clock to prevent parent re-renders
+const HeroClock = memo(function HeroClock() {
   const [localTime, setLocalTime] = useState("");
-  const [roleIndex, setRoleIndex] = useState(0);
-  const [currentText, setCurrentText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [copiedSnippet, setCopiedSnippet] = useState(false);
 
-  // Real-time IST clock
   useEffect(() => {
     const updateTime = () => {
-      const options: Intl.DateTimeFormatOptions = {
-        timeZone: "Asia/Kolkata",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      };
-      setLocalTime(new Intl.DateTimeFormat("en-US", options).format(new Date()));
+      try {
+        const options: Intl.DateTimeFormatOptions = {
+          timeZone: "Asia/Kolkata",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        };
+        setLocalTime(new Intl.DateTimeFormat("en-US", options).format(new Date()));
+      } catch {
+        setLocalTime("IST · Available");
+      }
     };
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Dynamic animated typewriter role switcher
+  return (
+    <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.02] border border-white/[0.06] text-xs font-mono text-gray-400">
+      <MapPin className="w-3.5 h-3.5 text-[#00f59b]" />
+      <span>Kerala, India</span>
+      <span className="text-gray-600">|</span>
+      <Clock className="w-3 h-3 text-gray-500" />
+      <span suppressHydrationWarning>{localTime || "IST"}</span>
+    </div>
+  );
+});
+
+// Memoized Typewriter to prevent re-rendering the entire 500-line Hero component every 30ms
+const HeroTypewriter = memo(function HeroTypewriter() {
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     const fullText = ROLES[roleIndex];
     let timer: NodeJS.Timeout;
@@ -64,8 +79,10 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
     if (!isDeleting && currentText === fullText) {
       timer = setTimeout(() => setIsDeleting(true), 2400);
     } else if (isDeleting && currentText === "") {
-      setIsDeleting(false);
-      setRoleIndex((prev) => (prev + 1) % ROLES.length);
+      timer = setTimeout(() => {
+        setIsDeleting(false);
+        setRoleIndex((prev) => (prev + 1) % ROLES.length);
+      }, 350);
     } else {
       const speed = isDeleting ? 28 : 55;
       timer = setTimeout(() => {
@@ -79,6 +96,27 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
     return () => clearTimeout(timer);
   }, [currentText, isDeleting, roleIndex]);
 
+  return (
+    <div className="flex items-center justify-center sm:justify-start gap-2.5 min-h-[32px] sm:min-h-[38px]">
+      <div className="flex items-center gap-1.5 text-[#00f59b] font-mono text-xs sm:text-sm font-semibold">
+        <span className="text-gray-500 font-normal">~/</span>
+        <span className="text-[#38bdf8]">role</span>
+        <span className="text-gray-600">:</span>
+      </div>
+      <div className="flex items-center">
+        <h2 className="text-base sm:text-xl md:text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#38bdf8] via-[#a78bfa] to-[#00f59b] tracking-tight font-display">
+          {currentText || ROLES[0]}
+        </h2>
+        <span className="inline-block w-2 sm:w-2.5 h-4 sm:h-5 bg-[#00f59b] ml-1.5 animate-pulse rounded-sm shadow-[0_0_10px_#00f59b]" />
+      </div>
+    </div>
+  );
+});
+
+export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [copiedSnippet, setCopiedSnippet] = useState(false);
+
   const handleCopySnippet = () => {
     const code = `export const engineer = {
   name: "${PERSONAL_INFO.name}",
@@ -90,12 +128,16 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
   github: "${PERSONAL_INFO.github}",
   status: "Available for Hire"
 };`;
-    navigator.clipboard.writeText(code);
-    setCopiedSnippet(true);
-    setTimeout(() => setCopiedSnippet(false), 2000);
+    try {
+      navigator.clipboard.writeText(code);
+      setCopiedSnippet(true);
+      setTimeout(() => setCopiedSnippet(false), 2000);
+    } catch {
+      // Fallback
+    }
   };
 
-  // Lightweight 60fps ambient particle canvas
+  // High-performance particle canvas with IntersectionObserver pause
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -108,25 +150,47 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
     }
 
     let animationFrameId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
+    let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
+
+    // Track visibility to completely pause render loop when offscreen
+    let isVisible = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
+
+    let lastWidth = width;
+    let lastHeight = height;
 
     const handleResize = () => {
       if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      const newWidth = canvas.parentElement?.clientWidth || window.innerWidth;
+      const newHeight = canvas.parentElement?.clientHeight || window.innerHeight;
+
+      // Ignore minor vertical height shifts caused by mobile address bar expand/collapse
+      if (Math.abs(newWidth - lastWidth) < 20 && Math.abs(newHeight - lastHeight) < 120) {
+        return;
+      }
+
+      lastWidth = width = canvas.width = newWidth;
+      lastHeight = height = canvas.height = newHeight;
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
     const particles: { x: number; y: number; vx: number; vy: number; radius: number; alpha: number }[] = [];
-    const particleCount = Math.min(width < 768 ? 25 : 55, 60);
+    const isMobile = width < 768;
+    const particleCount = isMobile ? 18 : 45;
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
+        vx: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.4),
+        vy: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.4),
         radius: Math.random() * 1.5 + 0.5,
         alpha: Math.random() * 0.35 + 0.1,
       });
@@ -140,49 +204,56 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
       mouseX = e.clientX - rect.left;
       mouseY = e.clientY - rect.top;
     };
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    if (!isMobile) {
+      window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    }
 
     const render = () => {
-      ctx.clearRect(0, 0, width, height);
+      if (isVisible) {
+        ctx.clearRect(0, 0, width, height);
 
-      // Draw connection lines
-      for (let i = 0; i < particles.length; i++) {
-        const p1 = particles[i];
-        p1.x += p1.vx;
-        p1.y += p1.vy;
+        // Draw connection lines
+        for (let i = 0; i < particles.length; i++) {
+          const p1 = particles[i];
+          p1.x += p1.vx;
+          p1.y += p1.vy;
 
-        if (p1.x < 0) p1.x = width;
-        if (p1.x > width) p1.x = 0;
-        if (p1.y < 0) p1.y = height;
-        if (p1.y > height) p1.y = 0;
+          if (p1.x < 0) p1.x = width;
+          if (p1.x > width) p1.x = 0;
+          if (p1.y < 0) p1.y = height;
+          if (p1.y > height) p1.y = 0;
 
-        // Mouse repelling/glow effect
-        const dxMouse = mouseX - p1.x;
-        const dyMouse = mouseY - p1.y;
-        const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-        if (distMouse < 100) {
-          p1.x -= (dxMouse / distMouse) * 0.8;
-          p1.y -= (dyMouse / distMouse) * 0.8;
-        }
+          // Mouse repelling/glow effect on desktop
+          if (!isMobile && mouseX > -500) {
+            const dxMouse = mouseX - p1.x;
+            const dyMouse = mouseY - p1.y;
+            const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+            if (distMouse < 100) {
+              p1.x -= (dxMouse / distMouse) * 0.8;
+              p1.y -= (dyMouse / distMouse) * 0.8;
+            }
+          }
 
-        ctx.beginPath();
-        ctx.arc(p1.x, p1.y, p1.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 245, 155, ${p1.alpha})`;
-        ctx.fill();
+          ctx.beginPath();
+          ctx.arc(p1.x, p1.y, p1.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 245, 155, ${p1.alpha})`;
+          ctx.fill();
 
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          for (let j = i + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(0, 245, 155, ${0.12 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
+            const maxDist = isMobile ? 85 : 115;
+            if (dist < maxDist) {
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = `rgba(0, 245, 155, ${0.12 * (1 - dist / maxDist)})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
           }
         }
       }
@@ -193,8 +264,11 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
     render();
 
     return () => {
+      observer.disconnect();
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
+      if (!isMobile) {
+        window.removeEventListener("mousemove", handleMouseMove);
+      }
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -207,7 +281,7 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
   return (
     <section
       id="hero"
-      className="relative min-h-[88vh] flex flex-col justify-center pt-20 pb-8 sm:pt-24 sm:pb-14 overflow-hidden bg-radial-grid"
+      className="relative min-h-[85vh] sm:min-h-[88vh] flex flex-col justify-center pt-20 pb-8 sm:pt-24 sm:pb-14 overflow-hidden bg-radial-grid"
     >
       {/* Interactive Background Canvas */}
       <canvas
@@ -216,13 +290,13 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
         aria-hidden="true"
       />
 
-      {/* Ambient Gradient Highlights */}
+      {/* Ambient Gradient Highlights optimized for GPU */}
       <div 
-        className="absolute top-1/4 right-[5%] w-80 sm:w-[500px] h-80 sm:h-[500px] bg-[#00f59b]/[0.04] rounded-full filter blur-[140px] pointer-events-none -z-10" 
+        className="ambient-glow absolute top-1/4 right-[5%] w-60 sm:w-[500px] h-60 sm:h-[500px] bg-[#00f59b]/[0.035] rounded-full filter blur-[70px] sm:blur-[140px] pointer-events-none -z-10" 
         aria-hidden="true"
       />
       <div 
-        className="absolute bottom-1/4 left-[5%] w-72 sm:w-[450px] h-72 sm:h-[450px] bg-[#38bdf8]/[0.04] rounded-full filter blur-[140px] pointer-events-none -z-10" 
+        className="ambient-glow absolute bottom-1/4 left-[5%] w-56 sm:w-[450px] h-56 sm:h-[450px] bg-[#38bdf8]/[0.035] rounded-full filter blur-[70px] sm:blur-[140px] pointer-events-none -z-10" 
         aria-hidden="true"
       />
 
@@ -242,13 +316,8 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
                 </span>
               </div>
 
-              <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.02] border border-white/[0.06] text-xs font-mono text-gray-400">
-                <MapPin className="w-3.5 h-3.5 text-[#00f59b]" />
-                <span>Kerala, India</span>
-                <span className="text-gray-600">|</span>
-                <Clock className="w-3 h-3 text-gray-500" />
-                <span suppressHydrationWarning>{localTime || "IST"}</span>
-              </div>
+              {/* Real-time Clock Component */}
+              <HeroClock />
 
               <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00f59b]/[0.08] border border-[#00f59b]/20 text-xs font-mono text-[#00f59b]">
                 <Sparkles className="w-3 h-3" />
@@ -260,7 +329,7 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
             <div className="space-y-2.5 sm:space-y-3 w-full relative">
               {/* Ambient glowing spotlight behind the name */}
               <div 
-                className="absolute -top-10 -left-6 w-80 sm:w-96 h-60 bg-gradient-to-r from-[#00f59b]/25 via-[#38bdf8]/15 to-transparent rounded-full blur-[80px] pointer-events-none -z-10" 
+                className="ambient-glow absolute -top-10 -left-6 w-72 sm:w-96 h-48 sm:h-60 bg-gradient-to-r from-[#00f59b]/25 via-[#38bdf8]/15 to-transparent rounded-full blur-[50px] sm:blur-[80px] pointer-events-none -z-10" 
                 aria-hidden="true"
               />
 
@@ -272,19 +341,7 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
               </h1>
 
               {/* Dynamic Animated Typewriter Role Switcher */}
-              <div className="flex items-center justify-center sm:justify-start gap-2.5 min-h-[32px] sm:min-h-[38px]">
-                <div className="flex items-center gap-1.5 text-[#00f59b] font-mono text-xs sm:text-sm font-semibold">
-                  <span className="text-gray-500 font-normal">~/</span>
-                  <span className="text-[#38bdf8]">role</span>
-                  <span className="text-gray-600">:</span>
-                </div>
-                <div className="flex items-center">
-                  <h2 className="text-base sm:text-xl md:text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#38bdf8] via-[#a78bfa] to-[#00f59b] tracking-tight font-display">
-                    {currentText || ROLES[0]}
-                  </h2>
-                  <span className="inline-block w-2 sm:w-2.5 h-4 sm:h-5 bg-[#00f59b] ml-1.5 animate-pulse rounded-sm shadow-[0_0_10px_#00f59b]" />
-                </div>
-              </div>
+              <HeroTypewriter />
             </div>
 
             {/* Value Proposition Statement */}
@@ -294,7 +351,7 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
 
             {/* Quick Tech Highlights Badge Strip */}
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-0.5">
-              {["React 19", "Next.js 15", "TypeScript", "Node.js", "MongoDB", "PostgreSQL", "Tailwind CSS"].map((tech) => (
+              {["React 19", "Next.js 16", "TypeScript", "Node.js", "MongoDB", "PostgreSQL", "Tailwind CSS"].map((tech) => (
                 <span 
                   key={tech} 
                   className="px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] hover:border-[#00f59b]/30 text-gray-300 hover:text-white text-xs font-mono transition-all duration-200 cursor-default"
@@ -319,7 +376,7 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
                   onClick={() => scrollTo("#contact")}
                   className="w-full sm:w-auto px-5 sm:px-6 py-3.5 bg-white/[0.04] hover:bg-white/[0.08] text-white font-semibold text-sm rounded-xl border border-white/[0.1] hover:border-white/[0.2] transition-all flex items-center justify-center cursor-pointer"
                 >
-                  Get In Touch
+                  <span>Get In Touch</span>
                 </button>
 
                 <button
@@ -385,7 +442,7 @@ export default function Hero({ onOpenResume, onOpenTerminal }: HeroProps) {
           <div className="hidden lg:block lg:col-span-5 relative">
             {/* Ambient card aura glow */}
             <div 
-              className="absolute -inset-4 bg-gradient-to-r from-[#00f59b]/15 via-[#38bdf8]/10 to-[#a78bfa]/15 rounded-3xl blur-2xl opacity-60 pointer-events-none -z-10" 
+              className="ambient-glow absolute -inset-4 bg-gradient-to-r from-[#00f59b]/15 via-[#38bdf8]/10 to-[#a78bfa]/15 rounded-3xl blur-2xl opacity-60 pointer-events-none -z-10" 
               aria-hidden="true"
             />
 

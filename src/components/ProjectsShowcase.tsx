@@ -7,21 +7,40 @@ import {
   ExternalLink, 
   ArrowRight, 
   Eye, 
-  Layers, 
   ChevronDown, 
-  Code2,
-  Sparkles,
   CheckCircle2,
-  Filter
+  Radio,
+  Image as ImageIcon
 } from "lucide-react";
 import { GithubIcon } from "./SocialIcons";
+import ProjectAppPreview from "./ProjectAppPreview";
 
 type CategoryFilter = "all" | "featured" | "saas" | "client" | "interactive";
+
+const getSafeHostname = (url?: string) => {
+  if (!url) return "preview.local";
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return "preview.local";
+  }
+};
 
 export default function ProjectsShowcase() {
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>("all");
   const [selectedCaseStudy, setSelectedCaseStudy] = useState<Project | null>(null);
   const [showAllSupporting, setShowAllSupporting] = useState(false);
+  
+  // Track which projects have Live Interactive App mode active in their browser frame
+  const [liveActiveMap, setLiveActiveMap] = useState<Record<string, boolean>>({});
+
+  const toggleLiveActive = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLiveActiveMap((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   // Filter logic
   const filteredProjects = ALL_PROJECTS.filter((p) => {
@@ -36,15 +55,18 @@ export default function ProjectsShowcase() {
   const featuredProjects = filteredProjects.filter((p) => p.isFeatured);
   const supportingProjects = filteredProjects.filter((p) => !p.isFeatured);
 
+  // Clean supporting project slice to eliminate awkward CSS max-height cutoff on mobile
+  const displayedSupporting = showAllSupporting ? supportingProjects : supportingProjects.slice(0, 3);
+
   return (
     <section id="projects" className="relative py-24 sm:py-32 border-t border-white/[0.08] overflow-hidden">
-      {/* Ambient Glows */}
+      {/* Ambient Glows optimized for mobile GPUs */}
       <div 
-        className="absolute top-1/3 left-0 w-96 h-96 bg-[#00f59b]/[0.03] rounded-full filter blur-[150px] pointer-events-none -z-10" 
+        className="ambient-glow absolute top-1/3 left-0 w-72 sm:w-96 h-72 sm:h-96 bg-[#00f59b]/[0.03] rounded-full filter blur-[70px] sm:blur-[150px] pointer-events-none -z-10" 
         aria-hidden="true"
       />
       <div 
-        className="absolute bottom-1/4 right-0 w-96 h-96 bg-[#38bdf8]/[0.03] rounded-full filter blur-[150px] pointer-events-none -z-10" 
+        className="ambient-glow absolute bottom-1/4 right-0 w-72 sm:w-96 h-72 sm:h-96 bg-[#38bdf8]/[0.03] rounded-full filter blur-[70px] sm:blur-[150px] pointer-events-none -z-10" 
         aria-hidden="true"
       />
 
@@ -63,15 +85,14 @@ export default function ProjectsShowcase() {
             </p>
           </div>
 
-          {/* Filter Pills in One Single Line on Mobile */}
-          {/* Filter Pills in One Single Line on Mobile */}
+          {/* Filter Pills with smooth mobile touch scrolling */}
           <div className="w-full md:w-auto flex justify-center md:justify-end overflow-x-auto py-1.5 md:py-0 px-2 sm:px-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <div className="inline-flex items-center gap-0.5 sm:gap-1 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md shrink-0">
+            <div className="inline-flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md shrink-0">
               <button
                 onClick={() => setActiveCategory("all")}
-                className={`px-2.5 sm:px-3.5 py-1.5 rounded-full text-[10.5px] sm:text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                   activeCategory === "all"
-                    ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25"
+                    ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                 }`}
               >
@@ -79,9 +100,9 @@ export default function ProjectsShowcase() {
               </button>
               <button
                 onClick={() => setActiveCategory("featured")}
-                className={`px-2.5 sm:px-3.5 py-1.5 rounded-full text-[10.5px] sm:text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                   activeCategory === "featured"
-                    ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25"
+                    ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                 }`}
               >
@@ -89,23 +110,23 @@ export default function ProjectsShowcase() {
               </button>
               <button
                 onClick={() => setActiveCategory("saas")}
-                className={`px-2.5 sm:px-3.5 py-1.5 rounded-full text-[10.5px] sm:text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                   activeCategory === "saas"
-                    ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25"
+                    ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                 }`}
               >
-                Full-Stack SaaS
+                <span>Full-Stack SaaS</span>
               </button>
               <button
                 onClick={() => setActiveCategory("client")}
-                className={`px-2.5 sm:px-3.5 py-1.5 rounded-full text-[10.5px] sm:text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                   activeCategory === "client"
-                    ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25"
+                    ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/25 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                 }`}
               >
-                Client Platforms
+                <span>Client Platforms</span>
               </button>
             </div>
           </div>
@@ -116,55 +137,100 @@ export default function ProjectsShowcase() {
           <div className="space-y-12 sm:space-y-16">
             {featuredProjects.map((project, idx) => {
               const isEven = idx % 2 === 0;
+              const isLiveActive = !!liveActiveMap[project.id];
+
               return (
                 <div
                   key={project.id}
                   className="glass-panel rounded-3xl border border-white/[0.08] hover:border-[#00f59b]/35 transition-all duration-300 overflow-hidden group shadow-xl"
                 >
                   <div className={`grid grid-cols-1 lg:grid-cols-12 items-stretch ${isEven ? "" : "lg:flex-row-reverse"}`}>
-                    {/* Visual Media Mockup Side */}
-                    <div 
-                      className={`lg:col-span-7 relative min-h-[260px] sm:min-h-[340px] lg:min-h-full h-[260px] sm:h-[340px] lg:h-auto bg-[#07080b] overflow-hidden cursor-pointer ${
+                    {/* Visual Media Mockup Side with Live Interactive Feature */}
+                    <div
+                      className={`lg:col-span-7 relative min-h-[300px] sm:min-h-[380px] lg:min-h-[440px] h-[320px] sm:h-[400px] lg:h-auto bg-[#07080b] overflow-hidden ${
                         isEven ? "lg:order-1" : "lg:order-2"
                       }`}
-                      onClick={() => setSelectedCaseStudy(project)}
                     >
                       {/* Browser Mockup Chrome Header */}
-                      <div className="absolute top-0 left-0 right-0 z-20 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-[#0d0f17]/90 backdrop-blur-md border-b border-white/[0.08] flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 shrink-0"></span>
-                          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 shrink-0"></span>
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 shrink-0"></span>
+                      <div className="absolute top-0 left-0 right-0 z-30 px-3.5 sm:px-4 py-2.5 bg-[#0d0f17]/95 backdrop-blur-md border-b border-white/[0.08] flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span className="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+                            <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                          </div>
                           <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 pl-1.5 truncate">
-                            {project.live ? new URL(project.live).hostname : "preview.local"}
+                            {getSafeHostname(project.live)}
                           </span>
                         </div>
-                        <span className="whitespace-nowrap shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider text-[#00f59b] bg-[#00f59b]/10 border border-[#00f59b]/20">
-                          {project.badge}
-                        </span>
+
+                        {/* Interactive Toggle Button: Live Preview vs Snapshot */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          {project.live && (
+                            <button
+                              type="button"
+                              onClick={(e) => toggleLiveActive(project.id, e)}
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                                isLiveActive
+                                  ? "bg-[#00f59b] text-[#07080b] shadow-sm shadow-[#00f59b]/30"
+                                  : "bg-white/[0.06] hover:bg-white/[0.12] text-gray-300 hover:text-[#00f59b] border border-white/10 hover:border-[#00f59b]/30"
+                              }`}
+                              title={isLiveActive ? "Switch to snapshot preview" : "Load live deployed web app inside frame"}
+                            >
+                              {isLiveActive ? (
+                                <>
+                                  <ImageIcon className="w-3 h-3" />
+                                  <span>Snapshot View</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Radio className="w-3 h-3 text-[#00f59b] animate-pulse" />
+                                  <span>Live Interactive App</span>
+                                </>
+                              )}
+                            </button>
+                          )}
+
+                          <span className="hidden sm:inline-block whitespace-nowrap px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider text-[#00f59b] bg-[#00f59b]/10 border border-[#00f59b]/20">
+                            {project.badge}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out pt-10"
-                        loading="lazy"
-                      />
+                      {/* Content Area: Live Interactive iframe OR Clean Snapshot Media */}
+                      {isLiveActive && project.live ? (
+                        <div className="absolute inset-0 pt-10 bg-[#07080b]">
+                          <iframe
+                            src={project.live}
+                            title={`${project.title} live preview`}
+                            className="w-full h-full border-0 bg-[#07080b]"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                            loading="lazy"
+                          />
+                        </div>
+                      ) : (
+                        <div 
+                          className="absolute inset-0 pt-10 cursor-pointer overflow-hidden group/preview"
+                          onClick={() => setSelectedCaseStudy(project)}
+                        >
+                          <ProjectAppPreview
+                            projectId={project.id}
+                            className="w-full h-full group-hover/preview:scale-[1.01] transition-transform duration-300"
+                          />
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0b0d14] via-transparent to-transparent opacity-80 pointer-events-none"></div>
-
-                      {/* Hover Overlay Hint */}
-                      <div className="absolute inset-0 bg-[#07080b]/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#00f59b] text-[#07080b] font-bold text-xs shadow-xl transform scale-95 group-hover:scale-100 transition-transform">
-                          <Eye className="w-4 h-4" />
-                          <span>Inspect Deep Case Study</span>
-                        </span>
-                      </div>
+                          {/* Floating interactive indicator to view full case study */}
+                          <div className="absolute bottom-3 right-3 z-20 opacity-90 sm:opacity-0 group-hover/preview:opacity-100 transition-all duration-200">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#07080b]/90 border border-[#00f59b]/40 text-[#00f59b] font-bold text-xs backdrop-blur-md shadow-lg shadow-black/80">
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Inspect Case Study</span>
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Content Editorial Side */}
-                    <div 
+                    <div
                       className={`lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-6 ${
                         isEven ? "lg:order-2" : "lg:order-1"
                       }`}
@@ -280,31 +346,29 @@ export default function ProjectsShowcase() {
                   className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-gray-300 hover:text-white transition-all cursor-pointer"
                 >
                   <span>{showAllSupporting ? "Collapse Grid" : `View All (${supportingProjects.length})`}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showAllSupporting ? "rotate-180" : ""}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showAllSupporting ? "rotate-180" : ""}`} />
                 </button>
               )}
             </div>
 
-            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${showAllSupporting ? "" : "max-h-[700px] overflow-hidden"}`}>
-              {supportingProjects.map((project) => (
+            {/* Grid rendering without cutoffs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayedSupporting.map((project) => (
                 <div
                   key={project.id}
                   className="glass-panel glass-panel-hover rounded-2xl border border-white/[0.08] flex flex-col justify-between overflow-hidden group cursor-pointer"
                   onClick={() => setSelectedCaseStudy(project)}
                 >
                   <div>
-                    {/* Media Thumbnail */}
-                    <div className="relative h-44 overflow-hidden bg-black/60">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
+                    {/* Media Thumbnail with authentic ProjectAppPreview */}
+                    <div className="relative h-44 overflow-hidden bg-[#07090e]">
+                      <ProjectAppPreview
+                        projectId={project.id}
+                        isCompact
+                        className="w-full h-full group-hover:scale-[1.02] transition-transform duration-300"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0e111a] via-transparent to-transparent opacity-90"></div>
-                      <div className="absolute top-3 left-3">
-                        <span className="whitespace-nowrap px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider text-[#00f59b] bg-black/70 border border-white/10 backdrop-blur-md">
+                      <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                        <span className="whitespace-nowrap px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider text-[#00f59b] bg-black/80 border border-white/10 backdrop-blur-md">
                           {project.type}
                         </span>
                       </div>
@@ -376,15 +440,19 @@ export default function ProjectsShowcase() {
               ))}
             </div>
 
-            {/* Toggle Button for mobile/tablet */}
+            {/* Toggle Button for mobile/tablet with exact remaining count */}
             {supportingProjects.length > 3 && (
               <div className="text-center pt-2">
                 <button
                   onClick={() => setShowAllSupporting(!showAllSupporting)}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-white transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/[0.05] hover:bg-[#00f59b]/15 hover:border-[#00f59b]/40 border border-white/10 text-xs font-semibold text-white hover:text-[#00f59b] transition-all cursor-pointer shadow-lg"
                 >
-                  <span>{showAllSupporting ? "Hide Additional Projects" : "View All Supporting Projects"}</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${showAllSupporting ? "rotate-180" : ""}`} />
+                  <span>
+                    {showAllSupporting 
+                      ? "Hide Additional Projects" 
+                      : `View All Supporting Projects (+${supportingProjects.length - 3} more)`}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllSupporting ? "rotate-180" : ""}`} />
                 </button>
               </div>
             )}

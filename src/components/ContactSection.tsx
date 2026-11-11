@@ -10,8 +10,6 @@ import {
   Check, 
   Send, 
   FileText, 
-  Sparkles,
-  ArrowRight,
   ExternalLink
 } from "lucide-react";
 import { LinkedinIcon, GithubIcon } from "./SocialIcons";
@@ -264,7 +262,7 @@ export default function ContactSection({ onOpenResume }: ContactSectionProps) {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Jane Doe"
-                      className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-[#00f59b] transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-base sm:text-sm placeholder:text-gray-600 focus:outline-none focus:border-[#00f59b] transition-colors"
                     />
                   </div>
 
@@ -279,7 +277,7 @@ export default function ContactSection({ onOpenResume }: ContactSectionProps) {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="jane@company.com"
-                      className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-[#00f59b] transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-base sm:text-sm placeholder:text-gray-600 focus:outline-none focus:border-[#00f59b] transition-colors"
                     />
                   </div>
                 </div>
@@ -295,7 +293,7 @@ export default function ContactSection({ onOpenResume }: ContactSectionProps) {
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="Engineering Role / Project Consultation"
-                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-[#00f59b] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-base sm:text-sm placeholder:text-gray-600 focus:outline-none focus:border-[#00f59b] transition-colors"
                   />
                 </div>
 
@@ -310,7 +308,7 @@ export default function ContactSection({ onOpenResume }: ContactSectionProps) {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Briefly describe your team, stack requirements, or project timeline..."
-                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-[#00f59b] transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-base sm:text-sm placeholder:text-gray-600 focus:outline-none focus:border-[#00f59b] transition-colors resize-none"
                   />
                 </div>
 

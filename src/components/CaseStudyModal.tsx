@@ -7,14 +7,13 @@ import {
   ExternalLink, 
   CheckCircle2, 
   AlertCircle, 
-  Layers, 
   Sparkles,
   Server,
   ArrowRight,
-  ShieldCheck,
   Zap
 } from "lucide-react";
 import { GithubIcon } from "./SocialIcons";
+import ProjectAppPreview from "./ProjectAppPreview";
 
 interface CaseStudyModalProps {
   project: Project | null;
@@ -75,38 +74,32 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
         </div>
 
         {/* Scrollable Content */}
-        <div className="p-5 sm:p-8 space-y-8 overflow-y-auto">
-          {/* Hero Banner with Preview */}
-          <div className="relative w-full h-56 sm:h-72 md:h-84 rounded-xl overflow-hidden border border-white/10 bg-black/60 group">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={project.image}
-              alt={project.title}
-              className="w-full h-full object-cover object-center"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0b0d14] via-[#0b0d14]/40 to-transparent"></div>
-
-            <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-wider text-[#00f59b]">
-                  {project.type}
+        <div className="p-5 sm:p-8 space-y-6 sm:space-y-8 overflow-y-auto">
+          {/* Authentic App Preview Container */}
+          <div className="rounded-xl overflow-hidden border border-white/10 bg-[#07090e] shadow-2xl">
+            {/* Window Browser Header */}
+            <div className="px-4 py-2.5 bg-black/60 border-b border-white/[0.08] flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                </div>
+                <span className="text-[11px] font-mono text-gray-400 pl-2 truncate">
+                  {project.live ? (project.live.replace(/^https?:\/\//, "").replace(/\/.*$/, "")) : `${project.id}.app`}
                 </span>
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mt-0.5">
-                  {project.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-gray-300">
-                  {project.subtitle}
-                </p>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono text-[#00f59b] bg-[#00f59b]/10 border border-[#00f59b]/25">
+                  Verified Interface
+                </span>
               </div>
 
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2 shrink-0">
                 {project.live && (
                   <a
                     href={project.live}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#00f59b] hover:bg-[#00d687] text-[#07080b] text-xs sm:text-sm font-bold rounded-lg shadow-lg shadow-[#00f59b]/20 transition-all transform hover:scale-105"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#00f59b] hover:bg-[#00d687] text-[#07080b] text-xs font-bold rounded-lg shadow-sm shadow-[#00f59b]/20 transition-all transform hover:scale-105"
                   >
                     <span>Launch Live App</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -117,13 +110,33 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium rounded-lg border border-white/10 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium rounded-lg border border-white/10 transition-colors"
                   >
                     <GithubIcon className="w-3.5 h-3.5" />
-                    <span>Repository</span>
+                    <span className="hidden sm:inline">Repository</span>
                   </a>
                 )}
               </div>
+            </div>
+
+            {/* App Screen Interface Preview */}
+            <div className="h-64 sm:h-80 md:h-96 w-full relative">
+              <ProjectAppPreview projectId={project.id} className="w-full h-full" />
+            </div>
+          </div>
+
+          {/* Project Title & Context Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
+            <div>
+              <span className="text-xs font-mono uppercase tracking-wider text-[#00f59b]">
+                {project.type}
+              </span>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mt-0.5">
+                {project.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-300">
+                {project.subtitle}
+              </p>
             </div>
           </div>
 

@@ -2,16 +2,12 @@
 
 import React, { useEffect } from "react";
 import { PERSONAL_INFO, WORK_EXPERIENCE, SKILLS_DATA, ALL_PROJECTS } from "@/data/portfolioData";
-import { 
-  X, 
-  Printer, 
-  Download, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Briefcase, 
-  GraduationCap, 
-  CheckCircle2,
+import {
+  X,
+  Printer,
+  Mail,
+  Phone,
+  MapPin,
   FileText
 } from "lucide-react";
 import { LinkedinIcon, GithubIcon } from "./SocialIcons";

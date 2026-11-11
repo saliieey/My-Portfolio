@@ -255,7 +255,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["Next.js", "TypeScript", "Tailwind CSS", "GSAP", "Framer Motion"],
     github: "https://github.com/saliieey?tab=repositories",
     live: "https://maelstrom-frames.vercel.app/",
-    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1200&h=750&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=75",
     metrics: [
       { label: "Animation Engine", value: "GSAP 3" },
       { label: "Rendering Speed", value: "60 FPS" },
@@ -290,7 +290,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["React", "TypeScript", "Node.js", "Express", "PostgreSQL", "Drizzle ORM", "Tailwind CSS"],
     github: "https://github.com/saliieey?tab=repositories",
     live: "https://musicflow-1.onrender.com/",
-    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=800&q=75",
     metrics: [
       { label: "Track Source", value: "Jamendo API" },
       { label: "Storage", value: "PostgreSQL" },
@@ -323,7 +323,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["React", "Vite", "TypeScript", "Tailwind CSS"],
     github: "https://github.com/saliieey?tab=repositories",
     live: "https://pikuboo-website.vercel.app/",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=75",
     metrics: [
       { label: "Build Tool", value: "Vite HMR" },
       { label: "Bundle Overhead", value: "< 50 KB" },
@@ -360,7 +360,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["React", "Vite", "Node.js", "Express", "MongoDB", "JWT", "Tailwind CSS", "Node-Cron"],
     github: "https://github.com/saliieey?tab=repositories",
     live: "https://investment-app-inky.vercel.app",
-    image: "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=800&q=75",
     metrics: [
       { label: "Commission Depth", value: "5 Levels" },
       { label: "ROI Automation", value: "Daily Cron" },
@@ -394,7 +394,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["Next.js", "React", "TypeScript", "Node.js", "Express", "AWS", "Tailwind CSS"],
     github: "https://github.com/saliieey?tab=repositories",
     live: "https://nicorai-website.vercel.app",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=75",
     metrics: [
       { label: "Architecture", value: "Next.js App Router" },
       { label: "AI Feature", value: "RAG Chatbot" },
@@ -428,7 +428,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["React 19", "Vite", "React Router", "Framer Motion", "Lucide Icons", "Vanilla CSS"],
     github: "https://github.com/saliieey/Simpex-Website",
     live: "https://simpex-website.vercel.app",
-    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=75",
     metrics: [
       { label: "React Version", value: "React 19" },
       { label: "Booking Speed", value: "< 3 Steps" },
@@ -456,7 +456,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["HTML5", "CSS3", "JavaScript", "GSAP ScrollTrigger"],
     github: "https://github.com/saliieey?tab=repositories",
     live: "https://luxenoirwatches.netlify.app/",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80"
+    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=75"
   },
   {
     id: "podnest",
@@ -479,7 +479,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
     github: "https://github.com/saliieey?tab=repositories",
     live: "https://podnest-youtube-agent.vercel.app",
-    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80"
+    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=75"
   },
   {
     id: "maelstrom-website",
@@ -502,7 +502,7 @@ export const ALL_PROJECTS: Project[] = [
     technologies: ["Next.js", "React", "GSAP", "CSS", "WordPress CMS"],
     github: "https://github.com/saliieey?tab=repositories",
     live: "https://maelstrom-global-website.vercel.app/",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80"
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=75"
   }
 ];
 
